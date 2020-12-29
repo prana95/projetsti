@@ -44,7 +44,7 @@ char round_key[16][49];
 char key[17];
 char plaintext[17];
 char plaintext_bis[65];
-	
+char ciphertext[65];
 
 int main(int argc,char**argv){
 	input * cle=init_input(65);
@@ -326,14 +326,13 @@ void encryption(char * p){
 	char left[33],right[33];
 	char * fk_p4=malloc(sizeof(char)*33);
 	char * xor=malloc(sizeof(char)*33);
-	int i,j;
-	char tmp[65];
+	int i,j=0;
+	//char tmp[65];
 	
 	
 	permutation(plaintext_bis,p,ip,64);
 	plaintext_bis[64]='\0';
 	while(j!=16){
-	printf("%d",j);
 		for(i=0;i<32;i++)                             
 		{
 			left[i]=plaintext_bis[i];
@@ -344,19 +343,31 @@ void encryption(char * p){
 		
 		
 		fk(fk_p4,round_key[j]);
-		fk_p4[32]='\0';
+		
 		fonction_xor(xor,left,fk_p4,32);
 		xor[32]='\0';
-/*		strcpy(left,right);*/
-/*		strcpy(right,xor);*/
-/*		*/
-/*		strcat(,right);*/
+		//print(xor); 
+		//strcpy(left,right);
+		//strcpy(right,xor);
+		
+		//strcat(,right);
 		concat(plaintext_bis,right,xor,32);
 		j++;
 	}
+	for(i=0;i<32;i++)                             
+		{
+			left[i]=plaintext_bis[i];
+			right[i]=plaintext_bis[i+32];
+		}
 	
-	print(plaintext);
+	//print(right);
 	
+	sw(right,left);
+	
+	
+	permutation(ciphertext,plaintext_bis,ip_inverse,64);
+	ciphertext[64]='\0';
+	print(ciphertext);
 	
 	
 	
@@ -373,6 +384,9 @@ void sw(char * left ,char * right){
 		plaintext_bis[i+32]=right[i];
 	}	
 }
+
+
+
 void fk(char * fk_p4,char * k){
 
 	int ep[48]={32,1,2,3,4,5,4,5,6,7,8,9,8,9,10,11,12,13,12,13,14,15,16,17,16,17,18,19,20,21,20,21,22,23,24,25,24,25,26,27,28,29,28,29,30,31,32,1};
@@ -387,9 +401,10 @@ void fk(char * fk_p4,char * k){
 		ep_bis[i]=plaintext_bis[(ep[i]-1)+32];
 	}
 	
-	printf("hello\n");
+	
 	fonction_xor(xor,ep_bis,k,48);
-	print(xor);
+	
+	
 	for(i=0;i<6;i++){
 		b1[i]=xor[i];
 		b2[i]=xor[i+6];
@@ -407,12 +422,12 @@ void fk(char * fk_p4,char * k){
 /*	print(b3);print(b4);*/
 /*	print(b5);print(b6);*/
 /*	print(b7);print(b8);*/
-
 	//operation Sbox
 	operation(new,b1,b2,b3,b4,b5,b6,b7,b8);
 	
 	permutation(fk_p4,new,p32,32);
 	fk_p4[32]='\0';
+	
 	
 	
 
@@ -743,7 +758,6 @@ void operation(char* new,char * b1, char *b2, char *b3, char *b4, char *b5, char
 	strcat(new,b6_bis);
 	strcat(new,b7_bis);
 	strcat(new,b8_bis);
-	print(new);
 	
 	
 
