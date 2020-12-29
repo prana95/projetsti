@@ -1,2 +1,2 @@
 gcc -Wall des.c
-./a.out hellowor
+./a.out 133457799BBCDFF1 0123456789ABCDEF
